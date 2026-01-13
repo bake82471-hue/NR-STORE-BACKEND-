@@ -3,35 +3,45 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-// Routers
-const itemsRouter = require("./routes/items");
-const commentsRouter = require("./routes/comments");
 const adminRouter = require("./routes/admin");
+const commentsRouter = require("./routes/comments");
+const itemsRouter = require("./routes/items");
 const settingsRouter = require("./routes/settings");
-const settingsRouter = require("./routes/settings");
-
-// Init DB
-require("./models/db");
+const uploadRouter = require("./routes/upload");
 
 const app = express();
 
-// ===== MIDDLEWARE =====
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// ===== ROUTES =====
-app.use("/items", itemsRouter);
-app.use("/items", commentsRouter);        // /items/:id/comments
-app.use("/admin", adminRouter);
-app.use("/settings", settingsRouter);     // /settings
+// Static files for uploaded images
+app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
 
-// ===== ROOT TEST =====
+// Routes
+app.use("/admin", adminRouter);
+app.use("/comments", commentsRouter);
+app.use("/items", itemsRouter);
+app.use("/settings", settingsRouter);
+app.use("/upload", uploadRouter);
+
+// Health check
 app.get("/", (req, res) => {
-    res.json({ ok: true, message: "NR PUFF STORE API" });
+    res.json({ status: "ok", message: "NR PUFF STORE backend running" });
 });
 
-// ===== SERVER START =====
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({ error: "Not found" });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error("Server error:", err);
+    res.status(500).json({ error: "Internal server error" });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Backend running on port", PORT);
+    console.log(`Server listening on port ${PORT}`);
 });
