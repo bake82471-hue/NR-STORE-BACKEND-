@@ -43,7 +43,10 @@ module.exports = {
                 image: data.image || null
             });
 
-            res.json({ success: true, id });
+            // Return the full item so the admin panel updates correctly
+            const newItem = await Items.getOne(id);
+            res.json(newItem);
+
         } catch (err) {
             console.error("create error:", err);
             res.status(500).json({ error: "Failed to create item" });
@@ -60,13 +63,11 @@ module.exports = {
                 return res.status(404).json({ error: "Item not found" });
             }
 
-            // Merge existing data with new data
             const merged = {
                 name: data.name ?? existing.name,
                 description: data.description ?? existing.description,
                 price: data.price ?? existing.price,
                 stock: data.stock ?? existing.stock,
-                // IMPORTANT: keep old image if no new image provided
                 image:
                     (data.image === undefined || data.image === null || data.image === "")
                         ? existing.image
@@ -75,7 +76,10 @@ module.exports = {
 
             await Items.update(id, merged);
 
-            res.json({ success: true });
+            // Return updated item so admin panel refreshes correctly
+            const updatedItem = await Items.getOne(id);
+            res.json(updatedItem);
+
         } catch (err) {
             console.error("update error:", err);
             res.status(500).json({ error: "Failed to update item" });
@@ -93,6 +97,7 @@ module.exports = {
 
             await Items.remove(id);
             res.json({ success: true });
+
         } catch (err) {
             console.error("remove error:", err);
             res.status(500).json({ error: "Failed to delete item" });
