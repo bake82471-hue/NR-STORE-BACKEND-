@@ -1,0 +1,9 @@
+// backend/routes/settings.js
+const express = require("express");
+const router = express.Router();
+const adminController = require("../controllers/adminController");
+
+// GET /settings
+router.get("/", adminController.getSettings);
+
+module.exports = router;
