@@ -7,7 +7,10 @@ const auth = require("../middleware/auth");
 // POST /admin/login
 router.post("/login", adminController.login);
 
-// PUT /admin/settings/instagram
-router.put("/settings/instagram", auth, adminController.updateInstagram);
+// GET /admin/settings
+router.get("/settings", adminController.getSettings);
+
+// PUT /admin/settings
+router.put("/settings", auth, adminController.updateSettings);
 
 module.exports = router;
