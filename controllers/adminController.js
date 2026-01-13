@@ -18,6 +18,10 @@ module.exports = {
         }
 
         const token = generateToken();
+
+        // ⭐ REQUIRED: store token so middleware can validate it
+        global.adminToken = token;
+
         res.json({ success: true, token });
     },
 
