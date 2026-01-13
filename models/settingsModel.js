@@ -1,21 +1,37 @@
 const db = require("./db");
 
 module.exports = {
-    getInstagram() {
-        return new Promise((resolve) => {
+
+    // ======================
+    // GET ALL SETTINGS
+    // ======================
+    getSettings() {
+        return new Promise((resolve, reject) => {
             db.get(
                 "SELECT value AS instagram_username FROM settings WHERE key='instagram_username'",
-                (err, row) => resolve(row)
+                (err, row) => {
+                    if (err) return reject(err);
+
+                    resolve({
+                        instagram_username: row ? row.instagram_username : ""
+                    });
+                }
             );
         });
     },
 
-    setInstagram(username) {
-        return new Promise((resolve) => {
+    // ======================
+    // UPDATE SETTINGS
+    // ======================
+    updateSettings({ instagram_username }) {
+        return new Promise((resolve, reject) => {
             db.run(
                 "UPDATE settings SET value=? WHERE key='instagram_username'",
-                [username],
-                () => resolve()
+                [instagram_username],
+                (err) => {
+                    if (err) return reject(err);
+                    resolve();
+                }
             );
         });
     }
