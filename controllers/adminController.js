@@ -6,6 +6,10 @@ const ADMIN_USERNAME = "Nick_Rizzi";
 const ADMIN_PASSWORD = "rizzi246820";
 
 module.exports = {
+
+    // ======================
+    // ADMIN LOGIN
+    // ======================
     async login(req, res) {
         const { username, password } = req.body;
 
@@ -17,14 +21,32 @@ module.exports = {
         res.json({ success: true, token });
     },
 
-    async updateInstagram(req, res) {
-        const { username } = req.body;
-        await Settings.setInstagram(username);
-        res.json({ success: true });
+    // ======================
+    // GET SETTINGS
+    // ======================
+    async getSettings(req, res) {
+        try {
+            const settings = await Settings.getSettings();
+            res.json(settings);
+        } catch (err) {
+            console.error("Error loading settings:", err);
+            res.status(500).json({ error: "Failed to load settings" });
+        }
     },
 
-    async getSettings(req, res) {
-        const settings = await Settings.getInstagram();
-        res.json(settings);
+    // ======================
+    // UPDATE SETTINGS
+    // ======================
+    async updateSettings(req, res) {
+        try {
+            const { instagram_username } = req.body;
+
+            await Settings.updateSettings({ instagram_username });
+
+            res.json({ success: true, instagram_username });
+        } catch (err) {
+            console.error("Error updating settings:", err);
+            res.status(500).json({ error: "Failed to update settings" });
+        }
     }
 };
