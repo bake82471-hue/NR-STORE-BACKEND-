@@ -11,14 +11,18 @@ const uploadRouter = require("./routes/upload");
 
 const app = express();
 
-// Middleware
+// ---------- MIDDLEWARE ----------
 app.use(cors());
 app.use(express.json());
 
-// Static files for uploaded images
-app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
+// Serve static uploaded images
+// -> frontend will use URLs like: https://nr-store-backend.onrender.com/uploads/filename.png
+app.use(
+    "/uploads",
+    express.static(path.join(__dirname, "public", "uploads"))
+);
 
-// Routes
+// ---------- ROUTES ----------
 app.use("/admin", adminRouter);
 app.use("/comments", commentsRouter);
 app.use("/items", itemsRouter);
@@ -30,17 +34,18 @@ app.get("/", (req, res) => {
     res.json({ status: "ok", message: "NR PUFF STORE backend running" });
 });
 
-// 404 handler
+// ---------- 404 HANDLER ----------
 app.use((req, res) => {
     res.status(404).json({ error: "Not found" });
 });
 
-// Error handler
+// ---------- ERROR HANDLER ----------
 app.use((err, req, res, next) => {
     console.error("Server error:", err);
     res.status(500).json({ error: "Internal server error" });
 });
 
+// ---------- START SERVER ----------
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
