@@ -1,9 +1,14 @@
+// backend/models/commentsModel.js
 const db = require("./db");
 
 module.exports = {
     getForItem(item_id) {
         return new Promise((resolve) => {
-            db.all("SELECT * FROM comments WHERE item_id=?", [item_id], (err, rows) => resolve(rows));
+            db.all(
+                "SELECT id, item_id, username, comment, date FROM comments WHERE item_id=? ORDER BY date DESC",
+                [item_id],
+                (err, rows) => resolve(rows)
+            );
         });
     },
 
@@ -12,7 +17,9 @@ module.exports = {
             db.run(
                 "INSERT INTO comments (item_id, username, comment, date) VALUES (?, ?, ?, datetime('now'))",
                 [item_id, username, comment],
-                () => resolve()
+                function () {
+                    resolve(this.lastID);
+                }
             );
         });
     }
