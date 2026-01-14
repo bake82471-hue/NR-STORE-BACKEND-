@@ -1,4 +1,3 @@
-// backend/server.js
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -16,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static uploaded images
-// -> frontend will use URLs like: https://nr-store-backend.onrender.com/uploads/filename.png
 app.use(
     "/uploads",
     express.static(path.join(__dirname, "public", "uploads"))
